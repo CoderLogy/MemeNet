@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="MemeNet" description="MemeNet is bringing you the best memes around the world">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
+    <script type="text/javascript" src="{ url_for('static', filename='firebase.js') }"></script>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <title>MemeNet</title>
+</head>
+
+<body>
+    <main>
+        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*" />
+            <button type="submit">Upload</button>
+        </form>
+
+        {% for image in images %}
+        <div class="container">
+            <img class="image" src="{{ image.url }}" alt="Image">
+            <div class="actions">
+                <button onclick="likeImage('{{ image.url }}')">Like</button>
+                <button onclick="commentImage('{{ image.url }}')">Dislike</button>
+                <button onclick="loadMoreImages()">Discription</button>
+                <!-- Add more action buttons as needed -->
+            </div>
+        </div>
+        {% endfor %}
+    </main>
+    <footer>
+        <a href="{{ url_for('index') }}"><button>Home</button></a>
+        <a href="{{ url_for('search') }}"><button>Search</button></a>
+        <a href="{{ url_for('post') }}"><button>Post</button></a>
+    </footer>
+    <script>
+        let currentPage = 1;
+        function debounce(func, wait, immediate) {
+                let timeout;
+                return function () {
+                    const context = this, args = arguments;
+                    const later = function () {
+                        timeout = null;
+                        if (!immediate) func.apply(context, args);
+                    };
+                    const callNow = immediate && !timeout;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                    if (callNow) func.apply(context, args);
+                };
+            }
+
+
+            // Debounce the loadMoreImages function to control its invocation rate
+            const debouncedLoadMoreImages = debounce(loadMoreImages, 300);
+
+            // Load more images when the user scrolls
+            window.addEventListener('scroll', function () {
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+                const scrollTop = window.scrollY;
+
+                // Check if the user is near the bottom of the page
+                if (windowHeight + scrollTop >= documentHeight - 100) {
+                    debouncedLoadMoreImages();
+                }
+            });
+
+
+        function loadMoreImages() {
+            // Fetch more images from the server using AJAX or any other method
+            // Update the 'images' array with the new images
+            // For demonstration, let's assume you add more images to the existing array
+            const newImages = [
+               //{ 'url': "https://images.pexels.com/photos/268533/pexels-photo-268533.jpeg?auto=compress&cs=tinysrgb&w=1200" }
+                // Add more images as needed
+            ];
+                        currentPage++;
+
+            fetch(`/load_more_images/${currentPage}`, {
+                headers: {
+                    'Authorization': 'da9b9438-b9e9-4c24-9780-46e6c2daa69d',
+                },
+            })
+        .then(response => response.json())
+        .then(data => {
+            // Append the new images to the main container
+            const main = document.querySelector('main');
+            data.images.forEach(image => {
+                const container = document.createElement('div');
+                container.className = 'container';
+                container.innerHTML = `
+                        <img class="image" src="${image.url}" alt="Image">
+                        <div class="actions">
+                            <button onclick="likeImage('${image.url}')">Like</button>
+                            <button onclick="commentImage('${image.url}')">Dislike</button>
+                            <button onclick="descriptionImage('${image.url}')">Description</button>
+                            <!-- Add more action buttons as needed -->
+                        </div>
+                    `;
+                main.appendChild(container);
+            });
+        });
+        }
+
+        function likeImage(imageUrl) {
+            // Handle like action
+            alert(`Liked image: ${imageUrl}`);
+        }
+
+        function commentImage(imageUrl) {
+            // Handle comment action
+            alert(`Commented on image: ${imageUrl}`);
+        }
+
+        // Implement additional JavaScript functions as needed
+    </script>
+</body>
+</html>
