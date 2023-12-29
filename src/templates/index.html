@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="MemeNet" description="MemeNet is bringing you the best memes around the world">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
-    <script type="text/javascript" src="{ url_for('static', filename='firebase.js') }"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='firebase.js') }}"></script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <title>MemeNet</title>
 </head>
@@ -74,11 +74,7 @@
             // For demonstration, let's assume you add more images to the existing array
                         currentPage++;
 
-            fetch(`/load_more_images/${currentPage}`, {
-                headers: {
-                    'Authorization': 'da9b9438-b9e9-4c24-9780-46e6c2daa69d',
-                },
-            })
+            fetch("/")
         .then(response => response.json())
         .then(data => {
             // Append the new images to the main container
