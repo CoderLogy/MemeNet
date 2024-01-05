@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for,jsonify,redirect
+from flask import Flask, render_template, request, url_for,jsonify,redirect,make_response
 import os,json
 from datetime import datetime
 from dotenv import load_dotenv
@@ -38,6 +38,12 @@ new_meme_ref = database.push(new_meme_data)
 r = database.get()
 print(r)
 '''
+
+@app.after_request
+def add_cache_control(response):
+    response.headers['Cache-Control'] = 'public, max-age=3600'  # Adjust max-age as needed
+    return response
+
 @app.route("/")
 def index():
     global timestamps
@@ -48,18 +54,23 @@ def index():
         blobs = list(blobs_iterator)
 
         # Extract URLs and timestamps from the fetched blobs
-        new_images = [{'url': blob.public_url, 'timestamp': blob.metadata.get('timestamp')} for blob in blobs if blob.metadata.get('timestamp') not in timestamps]
+        new_images = [{'url': blob.public_url, 'timestamp': blob.metadata.get('timestamp'), 'tags': blob.metadata.get('tags', []),
+               'title': blob.metadata.get('title', '')} for blob in blobs if blob.metadata.get('timestamp') is not None]
 
         if new_images:
-            timestamps += [blob.metadata.get('timestamp') for blob in blobs]
+            for blob in blobs:
+                timestamp = blob.metadata.get('timestamp')
+                print(f"Blob: {blob.name}, Timestamp: {timestamp}")
+                if timestamp is not None and timestamp not in timestamps:
+                    timestamps.append(timestamp)
 
-        print("Timestamps:", timestamps)  # Add this line for debugging
+        print("Timestamps:", timestamps)
 
         return render_template('index.html', images=new_images)
     except Exception as e:
         print(f"Error loading more images: {str(e)}")
         return jsonify(error=str(e))
-    
+
 @app.route("/search")
 def search():
     # Your search route logic here
@@ -74,25 +85,42 @@ def post():
 def upload():
     try:
         file = request.files['file']
+        title = request.form['title']
+        tags = request.form['tags']
+
+        # Split tags only if it is not empty or contains only spaces
+        tag_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
+
         if file:
             # Set metadata properties for the uploaded file
             metadata = {
                 'contentType': file.content_type,
-                'timestamp': str(datetime.utcnow()),  # Include the current timestamp
+                'timestamp': str(datetime.utcnow()),
+                'title': title,
+                'tags': tag_list,
             }
 
             # Upload the file with metadata
             blob = bucket.blob(f"images/{file.filename}")
             blob.upload_from_file(file, content_type=file.content_type)
-            
+
             # Set metadata properties after uploading the file
             blob.metadata = metadata
             blob.patch()
+
+            # Store data in the Firebase Realtime Database
+            database = db.reference("memes")
+            new_meme_data = {
+                'title': title,
+                'url': blob.public_url,
+                'tags': tag_list,
+            }
+
+            # Add the new meme to the database
+            new_meme_ref = database.push(new_meme_data)
 
             return redirect(url_for('index'))
     except Exception as e:
         print(f"Error uploading file: {str(e)}")
         return jsonify(status="error", error=str(e))
-
-
 app.run(debug=True)

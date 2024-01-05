@@ -12,23 +12,26 @@
 
 <body>
     <main>
-        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept="image/*" />
-            <button type="submit">Upload</button>
-        </form>
-
         {% for image in images %}
         <div class="container">
             <img class="image" src="{{ image.url }}" alt="Image">
             <div class="actions">
                 <button onclick="likeImage('{{ image.url }}')">Like</button>
-                <button onclick="commentImage('{{ image.url }}')">Dislike</button>
-                <button onclick="loadMoreImages()">Discription</button>
+                <button onclick="dislikeImage('{{ image.url }}')">Dislike</button>
+                <button onclick="showDescription('{{ image.title }}', '{{ image.url }}', '{{ image.tags }}')">Description</button>
                 <!-- Add more action buttons as needed -->
             </div>
         </div>
+        <h1>{{image.tags}}</h1>
         {% endfor %}
     </main>
+    <div id="descriptionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalTags"></p>
+        </div>
+    </div>
     <footer>
         <a href="{{ url_for('index') }}"><button>Home</button></a>
         <a href="{{ url_for('search') }}"><button>Search</button></a>
@@ -66,6 +69,32 @@
                     debouncedLoadMoreImages();
                 }
             });
+          // JavaScript functions for handling modal display
+           function showDescription(title, url, tags) {
+                // Convert tags to an array if it's stored as a string in the metadata
+                let tagsArray;
+
+                try {
+                    // Attempt to parse the tags as JSON
+                    tagsArray = JSON.parse(tags);
+                } catch (error) {
+                    // If parsing fails, handle it (e.g., treat it as a single string tag)
+                    tagsArray = [tags];
+                }
+
+                document.getElementById('modalTitle').innerText = title;
+                document.getElementById('modalTags').innerText = 'Tags: ' + tagsArray.join(', ');
+                document.getElementById('descriptionModal').style.display = 'block';
+                console.log(
+                   document.getElementById('modalTitle').innerText = title,
+                   document.getElementById('modalTags').innerText = 'Tags: ' + tags.join(', '),
+                   document.getElementById('modalImage').src = url,
+                   document.getElementById('descriptionModal').style.display = 'block'
+               );
+            }
+            function closeModal() {
+                document.getElementById('descriptionModal').style.display = 'none';
+            }
 
 
         function loadMoreImages() {
@@ -87,7 +116,7 @@
                         <div class="actions">
                             <button onclick="likeImage('${image.url}')">Like</button>
                             <button onclick="commentImage('${image.url}')">Dislike</button>
-                            <button onclick="descriptionImage('${image.url}')">Description</button>
+                            <button onclick="showDescription('${image.title}', '${image.url}', ${JSON.stringify(image.tags)})">Description</button>
                             <!-- Add more action buttons as needed -->
                         </div>
                     `;
@@ -101,9 +130,9 @@
             alert(`Liked image: ${imageUrl}`);
         }
 
-        function commentImage(imageUrl) {
+        function dislikeImage(imageUrl) {
             // Handle comment action
-            alert(`Commented on image: ${imageUrl}`);
+            alert(`Dislikex on image: ${imageUrl}`);
         }
 
         // Implement additional JavaScript functions as needed
