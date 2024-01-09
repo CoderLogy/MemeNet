@@ -1,3 +1,12 @@
+"""
+    This is a Flask web application that allows users to upload and view memes.
+    
+    :param response: The `response` parameter is the hCaptcha response that is sent from the client-side
+    when the user completes the hCaptcha challenge. It is used to validate the user's response and
+    ensure that the challenge was successfully completed
+    :return: The Flask app is being run in debug mode.
+    """
+
 from flask import Flask, render_template, request, url_for,jsonify,redirect,make_response,flash
 import os,json
 from datetime import datetime

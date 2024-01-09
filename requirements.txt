@@ -11,6 +11,7 @@ elastic-transport==8.11.0
 elasticsearch==8.11.1
 firebase-admin==6.3.0
 Flask==3.0.0
+Flask-ReCaptcha==0.4.2
 Flask-WTF==1.2.1
 gcloud==0.18.3
 google-api-core==2.15.0
@@ -48,7 +49,7 @@ Pyrebase4==4.7.1
 python-dotenv==1.0.0
 python-jwt==4.1.0
 python-magic==0.4.27
-requests==2.31.0
+requests==2.29.0
 requests-toolbelt==0.10.1
 rsa==4.9
 six==1.16.0
