@@ -1,10 +1,14 @@
-from flask import Flask, render_template, request, url_for,jsonify,redirect,make_response
+from flask import Flask, render_template, request, url_for,jsonify,redirect,make_response,flash
 import os,json
 from datetime import datetime
 from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import credentials,db,storage
 #import pyrebase
+from flask_wtf import FlaskForm
+from wtforms import StringField, FileField
+from wtforms.validators import DataRequired, ValidationError
+import requests
 
 load_dotenv()
 firebase_cred = json.loads(os.getenv("firebase_cred"))
@@ -16,6 +20,7 @@ bucket=storage.bucket(app=firebase_app)
 #storages = firebase.storage()
 timestamps=[]
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
 '''database = db.reference("memes")
 new_meme_data = {
     'title': 'New Funny Meme',
@@ -38,7 +43,30 @@ new_meme_ref = database.push(new_meme_data)
 r = database.get()
 print(r)
 '''
+class MemeForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    tags = StringField('Tags', validators=[DataRequired()])
+    file = FileField('File', validators=[DataRequired()])
+    hcaptcha_response = StringField('hCaptcha Response', validators=[DataRequired()])
 
+    def validate_hcaptcha_response(self, field):
+        # Validate hCaptcha response here
+        secret_key = os.getenv('captcha_key')
+        response = field.data
+
+        data = {
+            'secret': secret_key,
+            'response': response
+        }
+
+        verification_response = requests.post('https://hcaptcha.com/siteverify', data=data)
+        result = verification_response.json()
+
+        if not result['success']:
+            raise ValidationError('hCaptcha verification failed')
+        else:
+            return True
+        
 @app.after_request
 def add_cache_control(response):
     response.headers['Cache-Control'] = 'public, max-age=3600'  # Adjust max-age as needed
@@ -83,44 +111,54 @@ def post():
 
 @app.route("/upload", methods=["POST"])
 def upload():
-    try:
-        file = request.files['file']
-        title = request.form['title']
-        tags = request.form['tags']
+    form = MemeForm()
 
-        # Split tags only if it is not empty or contains only spaces
-        tag_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
+    # Check if the hCaptcha challenge is successfully completed
+    response = request.form.get('h-captcha-response')
+    if response:
+        try:
+            file = request.files['file']
+            title = request.form['title']
+            tags = request.form['tags']
 
-        if file:
-            # Set metadata properties for the uploaded file
-            metadata = {
-                'contentType': file.content_type,
-                'timestamp': str(datetime.utcnow()),
-                'title': title,
-                'tags': tag_list,
-            }
+            # Split tags only if it is not empty or contains only spaces
+            tag_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
 
-            # Upload the file with metadata
-            blob = bucket.blob(f"images/{file.filename}")
-            blob.upload_from_file(file, content_type=file.content_type)
+            if file:
+                # Set metadata properties for the uploaded file
+                metadata = {
+                    'contentType': file.content_type,
+                    'timestamp': str(datetime.utcnow()),
+                    'title': title,
+                    'tags': tag_list,
+                }
 
-            # Set metadata properties after uploading the file
-            blob.metadata = metadata
-            blob.patch()
+                # Upload the file with metadata
+                blob = bucket.blob(f"images/{file.filename}")
+                blob.upload_from_file(file, content_type=file.content_type)
 
-            # Store data in the Firebase Realtime Database
-            database = db.reference("memes")
-            new_meme_data = {
-                'title': title,
-                'url': blob.public_url,
-                'tags': tag_list,
-            }
+                # Set metadata properties after uploading the file
+                blob.metadata = metadata
+                blob.patch()
 
-            # Add the new meme to the database
-            new_meme_ref = database.push(new_meme_data)
+                # Store data in the Firebase Realtime Database
+                database = db.reference("memes")
+                new_meme_data = {
+                    'title': title,
+                    'url': blob.public_url,
+                    'tags': tag_list,
+                }
 
-            return redirect(url_for('index'))
-    except Exception as e:
-        print(f"Error uploading file: {str(e)}")
-        return jsonify(status="error", error=str(e))
+                # Add the new meme to the database
+                new_meme_ref = database.push(new_meme_data)
+
+                flash('Meme successfully uploaded!', 'success')
+                return redirect(url_for('index'))
+        except Exception as e:
+            print(f"Error uploading file: {str(e)}")
+            flash(f"Error uploading file: {str(e)}", 'error')
+    else:
+        flash('Please complete the hCaptcha challenge.', 'error')
+
+    return render_template('post.html', form=form)
 app.run(debug=True)

@@ -7,6 +7,7 @@
     <meta name="MemeNet" description="MemeNet is bringing you the best memes around the world">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
     <script type="text/javascript" src="{{ url_for('static', filename='firebase.js') }}"></script>
+    <script src="https://hcaptcha.com/1/api.js" async defer></script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <title>MemeNet - Post Your Meme</title>
 </head>
@@ -17,11 +18,11 @@
         <form action="/upload" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
             <label for="file">Choose a meme:</label>
             <input type="file" id="file" name="file" accept="image/*" onchange="previewImage()" required>
-
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" required>
             <label for="tags">Tags:</label>
             <input type="text" id="tags" name="tags" placeholder="Seperate using ,"   required>
+            <div class="h-captcha" data-sitekey="c771c7cc-50d6-402f-985c-2a696ba27aad"></div>
             <button type="submit">Post</button>
             <img id="imagePreview" alt="Image Preview" style="display: none; max-width: 100%; margin-top: 10px;">
         </form>
@@ -53,6 +54,7 @@
             // You can add additional validation logic here if needed
             return true;
         }
+        
     </script>
 </body>
 
