@@ -170,4 +170,3 @@ def upload():
         flash('Please complete the hCaptcha challenge.', 'error')
 
     return render_template('post.html', form=form)
-app.run(debug=True)
