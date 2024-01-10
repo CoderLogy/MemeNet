@@ -22,7 +22,7 @@
 <body>
     <main>
         {% for image in images %}
-        <h1 id="title">Title: {{image.title}}</h1>
+        <h1 class="title">Title: {{image.title}}</h1>
         <div class="container">
             <img class="image" src="{{ image.url }}" alt="Image">
             <div class="actions">
@@ -32,7 +32,7 @@
                 <!-- Add more action buttons as needed -->
             </div>
         </div>
-        <h1 id="tags">Tags: {{image.tags}}</h1>
+        <h1 class="tags">Tags: {{image.tags}}</h1>
         {% endfor %}
     </main>
     </div>

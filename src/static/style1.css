@@ -1,0 +1,100 @@
+/* Apply a CSS reset to remove default margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #000;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    /* Ensure the content takes the full height of the viewport */
+}
+
+h1 {
+    color: white;
+    margin-top: 10px;
+}
+
+main {
+    padding: 10px;
+    width: 100%;
+    max-width: 600px;
+    /* Adjust as needed */
+    margin: auto;
+    /* Center the content */
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 10px;
+}
+
+input,
+button {
+    margin-top: 5px;
+    padding: 10px;
+}
+
+input[type="file"] {
+    margin-bottom: 15px;
+    /* Add extra spacing for file input */
+}
+
+#imagePreview {
+    max-width: 100%;
+    margin-top: 10px;
+    display: none;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #1e1e1e;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+footer button {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Media query for larger screens */
+@media (min-width: 600px) {
+    main {
+        padding: 20px;
+    }
+}
+
+/* Media query for even larger screens */
+@media (min-width: 1000px) {
+    main {
+        max-width: 800px;
+    }
+}

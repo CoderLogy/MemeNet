@@ -128,11 +128,20 @@ footer button {
     }
 }
 
-#title{
+.title{
     position: relative;
     text-align: center;
 }
-#tags{
+.tags{
     position:relative;
     padding-bottom:50px;
+}
+
+#tags{
+    width: 150px;
+}
+
+#captcha{
+    position: relative;
+    margin: 2%;
 }
