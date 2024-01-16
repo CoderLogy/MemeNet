@@ -143,7 +143,7 @@ def upload():
                 }
 
                 # Upload the file with metadata
-                blob = bucket.blob(f"images/{file.filename}")
+                blob = bucket.blob(f"images/{file.filename}+{str(datetime.utcnow())}")
                 blob.upload_from_file(file, content_type=file.content_type)
 
                 # Set metadata properties after uploading the file
