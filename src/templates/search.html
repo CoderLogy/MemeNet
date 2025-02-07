@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="MemeNet" description="MemeNet is bringing you the best memes around the world">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style2.css')}}">
+    <script type="text/javascript" src="{{ url_for('static', filename='firebase.js') }}"></script>
+    <script src="https://hcaptcha.com/1/api.js" async defer></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYPP5TXMN8"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-PYPP5TXMN8');
+    </script>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <title>MemeNet - Post Your Meme</title>
+</head>
+
+<body>
+    <main>
+        <h1>Search</h1>
+    </main>
+    <footer>
+        <a href="{{ url_for('index') }}"><button>Home</button></a>
+        <a href="{{ url_for('search') }}"><button>Search</button></a>
+        <a href="{{ url_for('post') }}"><button>Post</button></a>
+    </footer>
+    <div class="search">
+        <form action="/search" method="POST">
+            <label for="search"></label>
+            <input type="text" id="search" name="search" placeholder="Enter hashtag or title name" required>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+</body>
+
+</html>

@@ -14,20 +14,14 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: auto;
-    width: auto;
     color: white;
-    /* Ensure the content takes the full height of the viewport */
+    background-color: #000;
 }
 
 h1 {
     color: white;
     margin-top: 10px;
-    /* Adjust as needed */
+    text-align: center;
 }
 
 header {
@@ -51,9 +45,7 @@ main {
     position: relative;
     max-width: 100%;
     max-height: 100%;
-    /* Make the image responsive */
     overflow: hidden;
-    /* Hide any overflowing content */
     border-radius: 5%;
     margin-top: 30px;
 }
@@ -65,31 +57,24 @@ img {
 
 .image {
     width: 100%;
-    /* Ensure the image takes up 100% of the container */
     height: 100%;
-    /* Maintain the aspect ratio of the image */
     object-fit: cover;
     object-position: center;
 }
 
 .actions {
-    position:absolute;
-    top:45%;
-    /* Center vertically */
+    position: absolute;
+    top: 45%;
     left: 75%;
-    /* Center horizontally */
-    /* Adjust for centering */
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    align-items:stretch;
+    align-items: stretch;
     padding: 10px;
     z-index: 1;
-    /* Place the actions above the image */
 }
 
 .actions button {
-    align-content: center;
     background-color: #333;
     color: #fff;
     padding: 10px;
@@ -123,64 +108,50 @@ footer button {
     cursor: pointer;
 }
 
-
-
-@media (min-width: 1000px) {
-    .container {
-        margin-top: 10px;
-    }
-    .actions{
-        left:90%;
-        
-    }
-}
-
-.title{
-    position: relative;
+.search-container {
     text-align: center;
-}
-.tags{
-    position:relative;
-    padding-bottom:50px;
+    margin-top: 20px;
 }
 
-#tags{
-    width: 150px;
+.search {
+    display: inline-block;
+    background-color: #1e1e1e;
+    padding: 10px;
+    border-radius: 5px;
 }
 
-#captcha{
-    position: relative;
-    margin: 2%;
-}
-
-.search{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-    font-size: 18px;
-    font-weight: 600;
+.search input[type="text"] {
     padding: 10px;
     font-size: 16px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    position: relative;
-    top:-500px;
+    outline: none;
+    width: calc(100% - 120px);
+    margin-right: 10px;
 }
-button{
+
+.search button {
     padding: 10px 20px;
     font-size: 16px;
     font-weight: 600;
     border-radius: 5px;
     border: none;
-    background-color:#3e6eff;
+    background-color: #3e6eff;
     color: white;
     cursor: pointer;
-    margin: 10px;
 }
-input[type="text"] {
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+
+@media screen and (max-width: 900px) {
+    .search {
+        padding: 15px;
+    }
+
+    .search input[type="text"] {
+        width: 90%;
+    }
+
+    .search button {
+        padding: 8px 5px;
+        font-size: 14px;
+    }
 }
