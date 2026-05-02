@@ -12,7 +12,7 @@ const { initializeAppCheck, ReCaptchaV3Provider } = require("firebase/app-check"
 
 const firebaseConfig = {
 
-    apiKey: "AIzaSyCG1x8rp4PCl71jZRMb24K2GB-jhzUlg2I",
+    apiKey: "",
 
     authDomain: "memenetted.firebaseapp.com",
 
